@@ -20,7 +20,7 @@ type JWTPayload struct {
 	IsShopOwner bool   `json:"is_shop_owner"` // Optional: Shop owner flag
 }
 
-func CreateJwt(payload JWTPayload, secret string) (string, error) {
+func CreateJwt(secret string, payload JWTPayload) (string, error) {
 	header := JWTHeader{
 		Alg: "HS256",
 		Typ: "JWT",

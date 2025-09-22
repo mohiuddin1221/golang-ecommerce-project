@@ -14,6 +14,7 @@ type Config struct {
 	Version     string
 	ServiceNmae string
 	HttpPort    int
+	JwtToken    string
 }
 
 func loadconfig() {
@@ -33,6 +34,13 @@ func loadconfig() {
 		fmt.Println("servicename is Required")
 		os.Exit(1)
 	}
+
+	jwtToken := os.Getenv("JWTTOKEN")
+	if jwtToken == "" {
+		fmt.Println("Jwt Token is Required")
+		os.Exit(1)
+	}
+
 	http_port := os.Getenv("HTTP_PORT")
 	if http_port == "" {
 		fmt.Println("http_port is Required")
@@ -48,6 +56,7 @@ func loadconfig() {
 		Version:     version,
 		ServiceNmae: servicename,
 		HttpPort:    httpPort,
+		JwtToken:    jwtToken,
 	}
 
 }

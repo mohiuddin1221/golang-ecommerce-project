@@ -1,9 +1,6 @@
 package main
 
-import (
-	"ecommerce/utils"
-	"fmt"
-)
+import "ecommerce/cmd"
 
 // "ecommerce/cmd"
 
@@ -25,18 +22,18 @@ func main() {
 	// signature := h.Sum(nil)
 	// fmt.Println("signature..........", signature)
 
-	jwt, err := utils.CreateJwt(utils.JWTPayload{
-		Sub:         100,
-		FirstName:   "Mohiuddin",
-		LastName:    "Topu",
-		Email:       "topu@gmail.com",
-		IsShopOwner: false,
-	}, "my_secret")
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	fmt.Println(jwt)
+	// jwt, err := utils.CreateJwt(utils.JWTPayload{
+	// 	Sub:         100,
+	// 	FirstName:   "Mohiuddin",
+	// 	LastName:    "Topu",
+	// 	Email:       "topu@gmail.com",
+	// 	IsShopOwner: false,
+	// }, "my_secret")
+	// if err != nil {
+	// 	fmt.Println(err)
+	// 	return
+	// }
+	// fmt.Println(jwt)
 
-	// cmd.Serve()
+	cmd.Serve()
 }

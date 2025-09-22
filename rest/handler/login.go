@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"ecommerce/config"
 	"ecommerce/databse"
 	"ecommerce/utils"
 	"encoding/json"
@@ -25,6 +26,19 @@ func LogIn(w http.ResponseWriter, r *http.Request) {
 		utils.SendError(w, "Inavlid emailor password", http.StatusBadRequest)
 		return
 	}
-	utils.SendData(w, usr, http.StatusCreated)
+	cnf := config.GetConfig()
+	accessToken, err := utils.CreateJwt(cnf.JwtToken, utils.JWTPayload{
+		Sub:         usr.ID,
+		FirstName:   usr.FirstName,
+		LastName:    usr.LastName,
+		Email:       usr.Email,
+		IsShopOwner: usr.IsShopOwner,
+	})
+	if err != nil {
+		utils.SendError(w, "Unauthorised user", http.StatusInternalServerError)
+		return
+
+	}
+	utils.SendData(w, accessToken, http.StatusCreated)
 
 }
