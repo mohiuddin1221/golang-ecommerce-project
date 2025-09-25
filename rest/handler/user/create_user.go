@@ -1,4 +1,4 @@
-package handler
+package user
 
 import (
 	"ecommerce/databse"
@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-func CreateUser(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	var newUser databse.User
 	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(&newUser)

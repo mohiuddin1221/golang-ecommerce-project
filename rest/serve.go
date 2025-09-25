@@ -3,58 +3,44 @@ package rest
 import (
 	"ecommerce/config"
 	"ecommerce/global_router"
-	"ecommerce/rest/handler"
+	"ecommerce/rest/handler/product"
+	"ecommerce/rest/handler/user"
 	"ecommerce/rest/middleware"
 	"fmt"
 	"net/http"
 	"strconv"
 )
 
-func Start(cnf config.Config) {
+type Server struct {
+	cnf            *config.Config
+	productHandler *product.Handler
+	userHandler    *user.Handler
+}
+
+func NewServer(
+	cnf *config.Config,
+	productHandler *product.Handler,
+	userHandler *user.Handler,
+) *Server {
+	return &Server{
+		cnf:            cnf,
+		productHandler: productHandler,
+		userHandler:    userHandler,
+	}
+}
+func (server *Server) Start() {
 	manager := middleware.Manager{}
 	manager.Use(middleware.Logger)
 	mux := http.NewServeMux()
 
-	mux.Handle("GET /products",
-		manager.With(
-			http.HandlerFunc(handler.Getproducts),
-		),
-	)
-	mux.Handle("POST /createProducts",
-		manager.With(
-			middleware.Authentication(http.HandlerFunc(handler.CreateProduct)),
-		),
-	)
-	mux.Handle("GET /productId/{id}",
-		manager.With(
-			http.HandlerFunc(handler.GetproductsById),
-		),
-	)
-	mux.Handle("PUT /products/{id}",
-		manager.With(
-			http.HandlerFunc(handler.UpdateProduct),
-		),
-	)
-	mux.Handle("DELETE /products/{id}",
-		manager.With(
-			http.HandlerFunc(handler.DeleteProduct),
-		),
-	)
+	//User routes
+	server.productHandler.RegisterUserRoutes(mux, manager)
+	server.userHandler.RegisterUserRoutes(mux, manager)
 
 	//crete user route
-	mux.Handle("POST /users",
-		manager.With(
-			http.HandlerFunc(handler.CreateUser),
-		),
-	)
-	mux.Handle("POST /login",
-		manager.With(
-			http.HandlerFunc(handler.LogIn),
-		),
-	)
 
 	handlerWithCORS := global_router.CorsMiddleware(mux)
-	addr := ":" + strconv.Itoa(cnf.HttpPort) //type casting int to string
+	addr := ":" + strconv.Itoa(server.cnf.HttpPort) //type casting int to string
 	fmt.Println("Server running on port: ", addr)
 	err := http.ListenAndServe(addr, handlerWithCORS)
 	if err != nil {

@@ -1,4 +1,4 @@
-package handler
+package product
 
 import (
 	"ecommerce/databse"
@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-func CreateProduct(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) CreateProduct(w http.ResponseWriter, r *http.Request) {
 
 	/*
 		1. Take body information from r.Body

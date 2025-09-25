@@ -1,4 +1,4 @@
-package handler
+package product
 
 import (
 	"ecommerce/databse"
@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-func DeleteProduct(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) DeleteProduct(w http.ResponseWriter, r *http.Request) {
 	productId := r.PathValue("id")
 	pid, err := strconv.Atoi(productId)
 	if err != nil {
