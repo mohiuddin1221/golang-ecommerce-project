@@ -1,12 +1,18 @@
 package product
 
 import (
-	"ecommerce/databse"
+	"ecommerce/repo"
 	"ecommerce/utils"
 	"encoding/json"
 	"net/http"
 	"strconv"
 )
+
+type UpProduct struct {
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	Price       int    `json:"price"`
+}
 
 func (h *Handler) UpdateProduct(w http.ResponseWriter, r *http.Request) {
 	productId := r.PathValue("id")
@@ -15,15 +21,25 @@ func (h *Handler) UpdateProduct(w http.ResponseWriter, r *http.Request) {
 		utils.SendData(w, "please give me integer number", 404)
 		return
 	}
-	var NewProduct databse.Product
+	var upproduct UpProduct
 	decoder := json.NewDecoder(r.Body)
-	err = decoder.Decode(&NewProduct)
+	err = decoder.Decode(&upproduct)
 	if err != nil {
 		http.Error(w, "please provide vlaid json", 400)
 		return
+
 	}
-	NewProduct.ID = pid
-	databse.Put(NewProduct)
+	err = h.productRepo.Update(repo.Product{
+		ID:          pid,
+		Title:       upproduct.Title,
+		Description: upproduct.Description,
+		Price:       upproduct.Price,
+	})
+	if err != nil {
+		http.Error(w, "please provide vlaid json", http.StatusInternalServerError)
+		return
+	}
+
 	utils.SendData(w, "Product syccesfully updated", 200)
 
 }

@@ -1,8 +1,6 @@
 package user
 
 import (
-	"ecommerce/config"
-	"ecommerce/databse"
 	"ecommerce/utils"
 	"encoding/json"
 	"net/http"
@@ -21,13 +19,17 @@ func (h *Handler) LogIn(w http.ResponseWriter, r *http.Request) {
 		utils.SendError(w, "Pleaser provide valis data", http.StatusBadRequest)
 		return
 	}
-	usr := databse.FindUser(Loginreq.Email, Loginreq.Password)
+	usr, err := h.userrepo.FindUser(Loginreq.Email, Loginreq.Password)
+	if err != nil {
+		utils.SendError(w, "Inavlid emailor password", http.StatusBadRequest)
+		return
+
+	}
 	if usr == nil {
 		utils.SendError(w, "Inavlid emailor password", http.StatusBadRequest)
 		return
 	}
-	cnf := config.GetConfig()
-	accessToken, err := utils.CreateJwt(cnf.JwtToken, utils.JWTPayload{
+	accessToken, err := utils.CreateJwt(h.cnf.JwtToken, utils.JWTPayload{
 		Sub:         usr.ID,
 		FirstName:   usr.FirstName,
 		LastName:    usr.LastName,

@@ -1,7 +1,6 @@
 package product
 
 import (
-	"ecommerce/databse"
 	"ecommerce/utils"
 	"net/http"
 	"strconv"
@@ -14,6 +13,9 @@ func (h *Handler) DeleteProduct(w http.ResponseWriter, r *http.Request) {
 		println("Please give me valid id")
 		return
 	}
-	databse.Delete(pid)
+	err = h.productRepo.Delete(pid)
+	if err != nil {
+		utils.SendError(w, "something went wrong", http.StatusInternalServerError)
+	}
 	utils.SendData(w, "succesfully deleted", 200)
 }
