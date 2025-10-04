@@ -9,15 +9,19 @@ import (
 	"ecommerce/rest/handler/user"
 	"ecommerce/rest/middleware"
 	"fmt"
+	"log"
 	"os"
 )
 
 func Serve() {
 	cnf := config.GetConfig()
 	dbcon, err := db.NewConnection()
+	dbUrl := ""
+	log.Println("Running migrations...")
+	db.RunMigration(dbUrl)
 
 	middlewars := middleware.Newmiddleare(cnf)
-	productrepo := repo.NewproductRepo()
+	productrepo := repo.NewproductRepo(dbcon)
 	userrepo := repo.NewUserRepo(dbcon)
 	if err != nil {
 		fmt.Println(err)
